@@ -1,0 +1,13 @@
+$ set -o pipefail
+$ for image in confluentinc/cp-kafka:7.9.0 confluentinc/cp-zookeeper:7.9.0; do
+$   docker image save --platform=linux/amd64 "$image" | docker exec -i kafka-homework-control-plane ctr --namespace=k8s.io images import --platform=linux/amd64 -
+$ done
+
+docker.io/confluentinc/cp kafka:7.9.0   	saved	
+application/vnd.docker.distribution.manifest.v2+json sha256:e6b87a4a8ca07aadba9c04d86515a340f67cd11ca6160c9b07205f3d88dfb5f1
+Importing	elapsed: 8.8 s	total:   0.0 B	(0.0 B/s)	
+docker.io/confluentinc/cp zookeeper:7.9.	saved	
+application/vnd.docker.distribution.manifest.v2+json sha256:1f7b0a8547fee58ecb58db7ec4b9536441adba916121b130ab9ac15be7595fe0
+Importing	elapsed: 8.2 s	total:   0.0 B	(0.0 B/s)	
+
+Exit code: 0

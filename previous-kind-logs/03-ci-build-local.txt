@@ -1,0 +1,29 @@
+$ docker build -t "$APP_IMAGE" .
+
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  10.24kB
+
+Step 1/6 : FROM python:3.10-slim
+ ---> 6ff506466f8b
+Step 2/6 : WORKDIR /app
+ ---> Using cache
+ ---> 19e567a32996
+Step 3/6 : COPY requirements.txt .
+ ---> Using cache
+ ---> 3a6a9729784d
+Step 4/6 : RUN pip install --no-cache-dir -r requirements.txt
+ ---> Using cache
+ ---> 2049daa0ecec
+Step 5/6 : COPY app/ ./app/
+ ---> Using cache
+ ---> 390101d1a900
+Step 6/6 : CMD ["python", "-u", "app/main.py"]
+ ---> Using cache
+ ---> 557b7a0a3617
+Successfully built 557b7a0a3617
+Successfully tagged kafka-demo:homework-verified
+
+Exit code: 0

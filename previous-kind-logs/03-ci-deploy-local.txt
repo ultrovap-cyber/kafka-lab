@@ -1,0 +1,29 @@
+$ kubectl --context "$KUBE_CONTEXT" apply -f k8s/kafka-deployment.yml
+$ kubectl --context "$KUBE_CONTEXT" -n kafka-lab rollout status deployment/zookeeper --timeout=180s
+$ kubectl --context "$KUBE_CONTEXT" -n kafka-lab rollout status deployment/kafka --timeout=300s
+$ kubectl --context "$KUBE_CONTEXT" -n kafka-lab exec deployment/kafka -- kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic test-topic --partitions 1 --replication-factor 1
+$ if [ -n "$KIND_CLUSTER" ]; then kind load docker-image "$APP_IMAGE" --name "$KIND_CLUSTER"; fi
+$ sed "s|kafka-demo:local|$APP_IMAGE|g" k8s/app-deployment.yml | kubectl --context "$KUBE_CONTEXT" apply -f -
+$ kubectl --context "$KUBE_CONTEXT" -n kafka-lab rollout status deployment/kafka-demo --timeout=180s
+$ kubectl --context "$KUBE_CONTEXT" -n kafka-lab logs deployment/kafka-demo --tail=20
+
+namespace/kafka-lab created
+service/zookeeper created
+deployment.apps/zookeeper created
+service/kafka created
+deployment.apps/kafka created
+Waiting for deployment "zookeeper" rollout to finish: 0 of 1 updated replicas are available...
+deployment "zookeeper" successfully rolled out
+Waiting for deployment "kafka" rollout to finish: 0 of 1 updated replicas are available...
+deployment "kafka" successfully rolled out
+Created topic test-topic.
+Image: "kafka-demo:homework-verified" with ID "sha256:557b7a0a3617fc65b79054ab99b88ae141a7f866e9b2976cbcfdd8bd7b7fa22f" not yet present on node "kafka-homework-control-plane", loading...
+deployment.apps/kafka-demo created
+Waiting for deployment "kafka-demo" rollout to finish: 0 of 1 updated replicas are available...
+deployment "kafka-demo" successfully rolled out
+Отправлено: Hello Kafka! id=bdf1ac61-8829-4c6f-83d5-8fe58f1c69db
+partition=0, offset=0
+Получено: Hello Kafka! id=bdf1ac61-8829-4c6f-83d5-8fe58f1c69db
+Проверка: OK
+
+Exit code: 0

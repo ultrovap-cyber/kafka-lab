@@ -1,0 +1,37 @@
+stages: [build, test, deploy]
+
+default:
+  tags: [kafka-lab]
+
+variables:
+  APP_IMAGE: kafka-demo:$CI_COMMIT_SHA
+  KUBE_CONTEXT: docker-desktop
+
+build:
+  stage: build
+  script:
+    - docker build -t "$APP_IMAGE" .
+
+test:
+  stage: test
+  script:
+    - export COMPOSE_PROJECT_NAME="kafka-ci-$CI_JOB_ID"
+    - export KAFKA_PORT=0
+    - trap 'docker compose down --volumes' EXIT
+    - docker compose up -d --wait kafka
+    - docker compose exec -T kafka kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic test-topic --partitions 1 --replication-factor 1
+    - docker compose run --rm --no-deps app
+
+deploy:
+  stage: deploy
+  resource_group: kafka-lab
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  script:
+    - kubectl --context "$KUBE_CONTEXT" apply -f k8s/kafka-deployment.yml
+    - kubectl --context "$KUBE_CONTEXT" -n kafka-lab rollout status deployment/zookeeper --timeout=180s
+    - kubectl --context "$KUBE_CONTEXT" -n kafka-lab rollout status deployment/kafka --timeout=300s
+    - kubectl --context "$KUBE_CONTEXT" -n kafka-lab exec deployment/kafka -- kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic test-topic --partitions 1 --replication-factor 1
+    - sed "s|kafka-demo:local|$APP_IMAGE|g" kafka-demo-deployment.yaml | kubectl --context "$KUBE_CONTEXT" apply -f -
+    - kubectl --context "$KUBE_CONTEXT" -n kafka-lab rollout status deployment/kafka-demo --timeout=180s
+    - kubectl --context "$KUBE_CONTEXT" -n kafka-lab logs deployment/kafka-demo --tail=20

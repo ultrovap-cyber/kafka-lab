@@ -1,0 +1,39 @@
+$ kubectl -n kafka-lab get deployments,pods,services
+$ kubectl -n kafka-lab logs deployment/kafka-demo --tail=20
+$ kubectl -n kafka-lab delete pod -l app=kafka-demo
+$ kubectl -n kafka-lab rollout status deployment/kafka-demo --timeout=180s
+$ kubectl -n kafka-lab get pods -l app=kafka-demo
+$ sleep 10
+$ kubectl -n kafka-lab logs deployment/kafka-demo --tail=20
+
+NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/kafka        1/1     1            1           5m15s
+deployment.apps/kafka-demo   1/1     1            1           12s
+deployment.apps/zookeeper    1/1     1            1           5m15s
+
+NAME                              READY   STATUS    RESTARTS   AGE
+pod/kafka-66698d946d-8r4vr        1/1     Running   0          70s
+pod/kafka-demo-7b845d5f5d-678ls   1/1     Running   0          12s
+pod/zookeeper-86955c5cd8-cbcs8    1/1     Running   0          5m15s
+
+NAME                TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/kafka       ClusterIP   10.96.227.121   <none>        9092/TCP   5m15s
+service/zookeeper   ClusterIP   10.96.122.78    <none>        2181/TCP   5m15s
+Отправлено: Hello Kafka! id=e3e0a893-ba0a-405c-aae3-779715bfec7a
+partition=0, offset=0
+Получено: Hello Kafka! id=e3e0a893-ba0a-405c-aae3-779715bfec7a
+Проверка: OK
+pod "kafka-demo-7b845d5f5d-678ls" deleted
+deployment "kafka-demo" successfully rolled out
+NAME                          READY   STATUS    RESTARTS   AGE
+kafka-demo-7b845d5f5d-rx7zh   1/1     Running   0          31s
+Отправлено: Hello Kafka! id=1fb74cfd-ca6f-43d0-a33e-4122da8333f3
+partition=0, offset=1
+Получено: Hello Kafka! id=1fb74cfd-ca6f-43d0-a33e-4122da8333f3
+Проверка: OK
+Отправлено: Hello Kafka! id=f1fe2a7e-4fdb-4d91-b83e-958b4c7f4ca5
+partition=0, offset=3
+Получено: Hello Kafka! id=f1fe2a7e-4fdb-4d91-b83e-958b4c7f4ca5
+Проверка: OK
+
+Exit code: 0

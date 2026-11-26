@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-demo
+  namespace: kafka-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-demo
+  template:
+    metadata:
+      labels:
+        app: kafka-demo
+    spec:
+      containers:
+        - name: app
+          image: kafka-demo:local
+          imagePullPolicy: Never
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: kafka:9092
+            - name: TOPIC
+              value: test-topic
+            - name: DEMO_INTERVAL
+              value: "30"

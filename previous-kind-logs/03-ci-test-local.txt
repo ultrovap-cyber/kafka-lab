@@ -1,0 +1,38 @@
+$ export COMPOSE_PROJECT_NAME="kafka-ci-$CI_JOB_ID"
+$ export KAFKA_PORT=0
+$ trap 'docker compose down --volumes' EXIT
+$ docker compose up -d --wait kafka
+$ docker compose exec -T kafka kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic test-topic --partitions 1 --replication-factor 1
+$ docker compose run --rm --no-deps app
+
+ Network kafka-ci-homework-verified_default  Creating
+ Network kafka-ci-homework-verified_default  Created
+ Container kafka-ci-homework-verified-zookeeper-1  Creating
+ Container kafka-ci-homework-verified-zookeeper-1  Created
+ Container kafka-ci-homework-verified-kafka-1  Creating
+ Container kafka-ci-homework-verified-kafka-1  Created
+ Container kafka-ci-homework-verified-zookeeper-1  Starting
+ Container kafka-ci-homework-verified-zookeeper-1  Started
+ Container kafka-ci-homework-verified-kafka-1  Starting
+ Container kafka-ci-homework-verified-kafka-1  Started
+ Container kafka-ci-homework-verified-kafka-1  Waiting
+ Container kafka-ci-homework-verified-zookeeper-1  Waiting
+ Container kafka-ci-homework-verified-zookeeper-1  Healthy
+ Container kafka-ci-homework-verified-kafka-1  Healthy
+Created topic test-topic.
+Отправлено: Hello Kafka! id=58f7cac4-918c-4f3e-b4df-6aa35a8cbe94
+partition=0, offset=0
+Получено: Hello Kafka! id=58f7cac4-918c-4f3e-b4df-6aa35a8cbe94
+Проверка: OK
+ Container kafka-ci-homework-verified-kafka-1  Stopping
+ Container kafka-ci-homework-verified-kafka-1  Stopped
+ Container kafka-ci-homework-verified-kafka-1  Removing
+ Container kafka-ci-homework-verified-kafka-1  Removed
+ Container kafka-ci-homework-verified-zookeeper-1  Stopping
+ Container kafka-ci-homework-verified-zookeeper-1  Stopped
+ Container kafka-ci-homework-verified-zookeeper-1  Removing
+ Container kafka-ci-homework-verified-zookeeper-1  Removed
+ Network kafka-ci-homework-verified_default  Removing
+ Network kafka-ci-homework-verified_default  Removed
+
+Exit code: 0

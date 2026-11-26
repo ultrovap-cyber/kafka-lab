@@ -1,0 +1,8 @@
+.git
+logs
+*.md
+__pycache__
+k8s
+.gitlab-ci.yml
+previous-kind-logs
+scripts

@@ -1,0 +1,16 @@
+$ docker compose config --quiet
+$ docker compose ps
+$ docker compose exec -T kafka kafka-topics --bootstrap-server kafka:9092 --describe --topic test-topic
+$ docker compose run --rm --no-deps app
+
+NAME                    IMAGE                             COMMAND                  SERVICE     CREATED          STATUS                    PORTS
+kafka-lab-kafka-1       confluentinc/cp-kafka:7.9.0       "/etc/confluent/dock…"   kafka       15 minutes ago   Up 15 minutes (healthy)   9092/tcp, 127.0.0.1:29092->29092/tcp
+kafka-lab-zookeeper-1   confluentinc/cp-zookeeper:7.9.0   "/etc/confluent/dock…"   zookeeper   15 minutes ago   Up 15 minutes             2181/tcp, 2888/tcp, 3888/tcp
+Topic: test-topic	TopicId: tIIf20FsRwS6QcYMWYpuyQ	PartitionCount: 1	ReplicationFactor: 1	Configs: 
+	Topic: test-topic	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: N/A	LastKnownElr: N/A
+Отправлено: Hello Kafka! id=c3035b23-7c44-4389-9133-9c99e2fe65c5
+partition=0, offset=2
+Получено: Hello Kafka! id=c3035b23-7c44-4389-9133-9c99e2fe65c5
+Проверка: OK
+
+Exit code: 0

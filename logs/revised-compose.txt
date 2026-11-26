@@ -1,0 +1,75 @@
+$ docker build -t kafka-demo:revised .
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  11.78kB
+
+Step 1/6 : FROM python:3.10-slim
+ ---> 6ff506466f8b
+Step 2/6 : WORKDIR /app
+ ---> Using cache
+ ---> 19e567a32996
+Step 3/6 : COPY app/requirements.txt ./requirements.txt
+ ---> Using cache
+ ---> 24ea50652b56
+Step 4/6 : RUN pip install --no-cache-dir -r requirements.txt
+ ---> Using cache
+ ---> 84baea0a79fe
+Step 5/6 : COPY app/ ./app/
+ ---> Using cache
+ ---> 7564254f8c02
+Step 6/6 : CMD ["python", "-u", "app/main.py"]
+ ---> Using cache
+ ---> 6a5e42c3e76d
+Successfully built 6a5e42c3e76d
+Successfully tagged kafka-demo:revised
+Exit code: 0
+$ /tmp/kafka-docker-compose -p kafka-revised-check -f /home/alexsly/storage/Diplom/kafka_homework/kafka_lab/docker-compose.yml config --quiet
+Exit code: 0
+$ /tmp/kafka-docker-compose -p kafka-revised-check -f /home/alexsly/storage/Diplom/kafka_homework/kafka_lab/docker-compose.yml up -d --wait kafka
+ Network kafka-revised-check_default  Creating
+ Network kafka-revised-check_default  Created
+ Container kafka-revised-check-zookeeper-1  Creating
+ Container kafka-revised-check-zookeeper-1  Created
+ Container kafka-revised-check-kafka-1  Creating
+ Container kafka-revised-check-kafka-1  Created
+ Container kafka-revised-check-zookeeper-1  Starting
+ Container kafka-revised-check-zookeeper-1  Started
+ Container kafka-revised-check-kafka-1  Starting
+ Container kafka-revised-check-kafka-1  Started
+ Container kafka-revised-check-zookeeper-1  Waiting
+ Container kafka-revised-check-kafka-1  Waiting
+ Container kafka-revised-check-zookeeper-1  Healthy
+ Container kafka-revised-check-kafka-1  Healthy
+Exit code: 0
+$ /tmp/kafka-docker-compose -p kafka-revised-check -f /home/alexsly/storage/Diplom/kafka_homework/kafka_lab/docker-compose.yml ps
+NAME                              IMAGE                             COMMAND                  SERVICE     CREATED         STATUS                   PORTS
+kafka-revised-check-kafka-1       confluentinc/cp-kafka:7.9.0       "/etc/confluent/dock…"   kafka       6 seconds ago   Up 6 seconds (healthy)   9092/tcp, 127.0.0.1:32768->29092/tcp
+kafka-revised-check-zookeeper-1   confluentinc/cp-zookeeper:7.9.0   "/etc/confluent/dock…"   zookeeper   7 seconds ago   Up 6 seconds             2181/tcp, 2888/tcp, 3888/tcp
+Exit code: 0
+$ /tmp/kafka-docker-compose -p kafka-revised-check -f /home/alexsly/storage/Diplom/kafka_homework/kafka_lab/docker-compose.yml exec -T kafka kafka-topics --bootstrap-server kafka:9092 --create --if-not-exists --topic test-topic --partitions 1 --replication-factor 1
+Created topic test-topic.
+Exit code: 0
+$ /tmp/kafka-docker-compose -p kafka-revised-check -f /home/alexsly/storage/Diplom/kafka_homework/kafka_lab/docker-compose.yml exec -T kafka kafka-topics --bootstrap-server kafka:9092 --describe --topic test-topic
+Topic: test-topic	TopicId: MkZrKIwYRYC_GvJdJwx1Mw	PartitionCount: 1	ReplicationFactor: 1	Configs: 
+	Topic: test-topic	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: N/A	LastKnownElr: N/A
+Exit code: 0
+$ /tmp/kafka-docker-compose -p kafka-revised-check -f /home/alexsly/storage/Diplom/kafka_homework/kafka_lab/docker-compose.yml run --rm --no-deps app
+Отправлено: Hello Kafka! id=df6aee13-3101-4183-adcb-59d407c44577
+partition=0, offset=0
+Получено: Hello Kafka! id=df6aee13-3101-4183-adcb-59d407c44577
+Проверка: OK
+Exit code: 0
+$ /tmp/kafka-docker-compose -p kafka-revised-check -f /home/alexsly/storage/Diplom/kafka_homework/kafka_lab/docker-compose.yml down --volumes
+ Container kafka-revised-check-kafka-1  Stopping
+ Container kafka-revised-check-kafka-1  Stopped
+ Container kafka-revised-check-kafka-1  Removing
+ Container kafka-revised-check-kafka-1  Removed
+ Container kafka-revised-check-zookeeper-1  Stopping
+ Container kafka-revised-check-zookeeper-1  Stopped
+ Container kafka-revised-check-zookeeper-1  Removing
+ Container kafka-revised-check-zookeeper-1  Removed
+ Network kafka-revised-check_default  Removing
+ Network kafka-revised-check_default  Removed
+Exit code: 0
