@@ -83,7 +83,7 @@ bash scripts/verify-desktop.sh 2>&1 | tee logs/desktop-kubernetes.txt
 
 Я перенёс зависимости в `app/requirements.txt`, обновил Dockerfile и команды установки. Я переименовал манифест приложения в `kafka-demo-deployment.yaml` и обновил CI/CD. Я подготовил отдельный сценарий проверки Kubernetes Docker Desktop.
 
-Я опубликовал исправленный проект в публичном репозитории [ultrovap-cyber/kafka-lab](https://github.com/ultrovap-cyber/kafka-lab). Я предоставляю [прямую ссылку на этот Markdown-отчёт](https://github.com/ultrovap-cyber/kafka-lab/blob/main/Homework_30_Kafka.md). Я пока не подтвердил запуск Kubernetes Docker Desktop: в доступной среде обнаружен Docker Engine, а контекст Docker Desktop отсутствует. Я завершу эти два пункта перед повторной сдачей и добавлю настоящую ссылку на опубликованный отчёт и журнал успешного запуска.
+Я опубликовал исправленный проект в публичном репозитории [ultrovap-cyber/kafka-lab](https://github.com/ultrovap-cyber/kafka-lab). Я предоставляю [прямую ссылку на этот Markdown-отчёт](https://github.com/ultrovap-cyber/kafka-lab/blob/main/Homework_30_Kafka.md). Я пока не подтвердил запуск Kubernetes Docker Desktop: в доступной среде обнаружен Docker Engine, а контекст Docker Desktop отсутствует. Я завершу проверку Kubernetes Docker Desktop перед повторной сдачей и добавлю журнал успешного запуска.
 
 ### Повторная проверка исправленного проекта
 
