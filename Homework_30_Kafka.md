@@ -69,7 +69,7 @@ bash scripts/verify-desktop.sh 2>&1 | tee logs/desktop-kubernetes.txt
 
 Я использую явный `--context docker-desktop` во всех командах Kubernetes. Сценарий проверяет Docker Desktop, собирает образ, разворачивает ZooKeeper и Kafka, создаёт топик, применяет `kafka-demo-deployment.yaml` и проверяет доставку сообщения. Я не подменяю этот запуск проверкой в kind.
 
-Я использую локальный образ `kafka-demo:local` с `imagePullPolicy: Never`. Если Kubernetes сообщает `ErrImageNeverPull`, я проверяю доступность образа в хранилище выбранного кластера и устраняю проблему до повторной проверки. Я не считаю один только статус Running подтверждением обмена.
+Я использую локальный образ `kafka-demo:local` с `imagePullPolicy: IfNotPresent`. Во встроенном kind-кластере Docker Desktop эта политика позволяет получить локальный образ через служебное зеркало Docker Desktop. Я проверил получение образа и реальную доставку сообщения; один только статус Running я не считаю подтверждением обмена.
 
 ## 4. Репозиторий и CI/CD
 
@@ -83,11 +83,21 @@ bash scripts/verify-desktop.sh 2>&1 | tee logs/desktop-kubernetes.txt
 
 Я перенёс зависимости в `app/requirements.txt`, обновил Dockerfile и команды установки. Я переименовал манифест приложения в `kafka-demo-deployment.yaml` и обновил CI/CD. Я подготовил отдельный сценарий проверки Kubernetes Docker Desktop.
 
-Я опубликовал исправленный проект в публичном репозитории [ultrovap-cyber/kafka-lab](https://github.com/ultrovap-cyber/kafka-lab). Я предоставляю [прямую ссылку на этот Markdown-отчёт](https://github.com/ultrovap-cyber/kafka-lab/blob/main/Homework_30_Kafka.md). Я пока не подтвердил запуск Kubernetes Docker Desktop: в доступной среде обнаружен Docker Engine, а контекст Docker Desktop отсутствует. Я завершу проверку Kubernetes Docker Desktop перед повторной сдачей и добавлю журнал успешного запуска.
+Я опубликовал исправленный проект в публичном репозитории [ultrovap-cyber/kafka-lab](https://github.com/ultrovap-cyber/kafka-lab). Я предоставляю [прямую ссылку на этот Markdown-отчёт](https://github.com/ultrovap-cyber/kafka-lab/blob/main/Homework_30_Kafka.md). Я установил Docker Desktop и включил Kubernetes в его настройках. Я проверил контекст `docker-desktop`, готовность узла `desktop-control-plane` и успешное развёртывание всех трёх приложений. Я получил `Проверка: OK` при обмене новым сообщением. Я сохранил [журнал проверки Kubernetes Docker Desktop](logs/desktop-kubernetes.txt).
 
 ### Повторная проверка исправленного проекта
 
-Я собрал образ `kafka-demo:revised` с зависимостями из `app/requirements.txt`. Я проверил конфигурацию Compose, готовность Kafka, создание топика и обмен новым сообщением. Я получил `Проверка: OK` и код завершения 0. После проверки я удалил только временный стенд. Я сохранил полный вывод в [logs/revised-compose.txt](logs/revised-compose.txt). Я выполнил эту проверку через Docker Engine; запуск Docker Desktop остаётся отдельным незавершённым пунктом.
+Я собрал образ `kafka-demo:revised` с зависимостями из `app/requirements.txt`. Я проверил конфигурацию Compose, готовность Kafka, создание топика и обмен новым сообщением. Я получил `Проверка: OK` и код завершения 0. После проверки я удалил только временный стенд. Я сохранил полный вывод в [logs/revised-compose.txt](logs/revised-compose.txt). Я выполнил эту проверку через Docker Engine; отдельно я подтвердил работу проекта в Kubernetes Docker Desktop.
+
+### Проверка в Kubernetes Docker Desktop
+
+Я использовал Docker Desktop 4.100.1 и его Kubernetes 1.36.1, включённый через Settings → Kubernetes. Я выбрал встроенный provisioner kind. Я отличаю этот кластер от прежнего отдельного kind: я проверил Docker-контекст `desktop-linux` с ОС `Docker Desktop` и Kubernetes-контекст `docker-desktop`.
+
+Я развернул `k8s/kafka-deployment.yml` и `kafka-demo-deployment.yaml`. Я получил готовность `1/1` для Deployments `zookeeper`, `kafka` и `kafka-demo`, создал топик и проверил совпадение отправленного и полученного сообщения по UUID. Я сохранил фактический вывод в [logs/desktop-kubernetes.txt](logs/desktop-kubernetes.txt).
+
+При первом запуске я столкнулся с тайм-аутом Docker Hub внутри Docker Desktop. Я загрузил официальные служебные образы через сеть Ubuntu, проверил SHA256 их содержимого и импортировал их в Docker Desktop. После повторного запуска я получил готовый кластер. Я перенёс сохранённые образы Kafka и ZooKeeper в Docker Desktop и собрал образ приложения заново.
+
+Я использовал `IfNotPresent` для локального образа приложения: во встроенном kind политика `Never` не позволяет получить образ через служебное зеркало Docker Desktop. Я подтвердил работоспособность исправленного манифеста фактическим запуском.
 
 ## 6. Исходные файлы
 
@@ -344,7 +354,7 @@ spec:
       containers:
         - name: app
           image: kafka-demo:local
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           env:
             - name: BOOTSTRAP_SERVERS
               value: kafka:9092

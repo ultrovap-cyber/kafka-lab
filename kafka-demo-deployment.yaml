@@ -16,7 +16,7 @@ spec:
       containers:
         - name: app
           image: kafka-demo:local
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
           env:
             - name: BOOTSTRAP_SERVERS
               value: kafka:9092

@@ -6,4 +6,4 @@
 
 Я разместил зависимости в `app/requirements.txt`, а манифест приложения — в `kafka-demo-deployment.yaml`. Я храню `.gitlab-ci.yml` как конфигурацию GitLab; на GitHub этот файл автоматически не выполняется.
 
-Я пока не подтвердил проверку в Kubernetes Docker Desktop. Для её выполнения я подготовил `scripts/verify-desktop.sh`. Журналы прежнего запуска в kind я сохранил отдельно в `previous-kind-logs/`.
+Я подтвердил развёртывание и обмен сообщениями в Kubernetes Docker Desktop. Я сохранил вывод в [logs/desktop-kubernetes.txt](logs/desktop-kubernetes.txt). Для повторения я использую `scripts/verify-desktop.sh`. Журналы прежнего отдельного запуска в kind я сохранил в `previous-kind-logs/`.
